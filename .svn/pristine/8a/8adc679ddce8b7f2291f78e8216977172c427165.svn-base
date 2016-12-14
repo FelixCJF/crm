@@ -1,0 +1,47 @@
+package com.itheima.crm.coursetype.web.action;
+
+import java.util.List;
+
+import com.itheima.crm.coursetype.domain.CrmCourseType;
+import com.itheima.crm.coursetype.service.CourseTypeService;
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
+
+public class CourseTypeAction extends ActionSupport implements ModelDriven<CrmCourseType> {
+	// 1 封装数据
+	private CrmCourseType courseType = new CrmCourseType();
+	@Override
+	public CrmCourseType getModel() {
+		return courseType;
+	}
+	
+	//2 service 
+	private CourseTypeService courseTypeService;
+	public void setCourseTypeService(CourseTypeService courseTypeService) {
+		this.courseTypeService = courseTypeService;
+	}
+	
+	//#################################
+	
+	
+	/**
+	 * 查询所有
+	 * @return
+	 */
+	public String findAll(){
+		// 通知service查询
+		List<CrmCourseType> allCourseType = this.courseTypeService.findAll();
+		// action 存放 root(List)  set(key,value)  ，jsp 获得 “key”
+		// * set 底层使用Map，将数据先存放到Map中，然后将Map压入到栈顶
+		// * 如果此map在栈顶，将共享Map对象。如果不在栈顶将创建一个新的map。
+		ActionContext.getContext().getValueStack().set("allCourseType", allCourseType);
+		
+		
+		return "findAll";
+	}
+	
+	
+	
+
+}

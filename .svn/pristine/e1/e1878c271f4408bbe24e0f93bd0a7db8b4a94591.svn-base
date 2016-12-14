@@ -1,0 +1,37 @@
+package com.itheima.crm.coursetype.dao.impl;
+
+import java.util.List;
+
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import com.itheima.crm.coursetype.dao.CourseTypeDao;
+import com.itheima.crm.coursetype.domain.CrmCourseType;
+
+public class CourseTypeDaoImpl extends HibernateDaoSupport implements CourseTypeDao {
+
+	@Override
+	public void save(CrmCourseType courseType) {
+		this.getHibernateTemplate().save(courseType);
+	}
+
+	@Override
+	public void update(CrmCourseType courseType) {
+		this.getHibernateTemplate().update(courseType);
+	}
+
+	@Override
+	public void delete(CrmCourseType courseType) {
+		this.getHibernateTemplate().delete(courseType);
+	}
+
+	@Override
+	public List<CrmCourseType> findAll() {
+		return this.getHibernateTemplate().find("from CrmCourseType");
+	}
+
+	@Override
+	public CrmCourseType findById(String id) {
+		return this.getHibernateTemplate().get(CrmCourseType.class, id);
+	}
+
+}

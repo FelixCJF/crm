@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 每一个模块 # 单独配置员工 , 所有的模块将使用“struts.xml.公共模块”-->
+	<package name="crm_sta" namespace="/staff" extends="common">
+		<action name="staffAction_*" class="com.itheima.crm.staff.web.action.StaffAction" method="{1}">
+			<!-- 1 登录成功 ,重定向 成功页（action）
+				dispatcher ，默认值，请求转发到jsp
+				redirect，重定向到jsp
+				redirectAction，重定向到另一个action
+				chain，链 请求转发到另一个action
+			-->
+			<result name="success" type="redirectAction">staffAction_home</result>
+			<!-- 2 login 在登录页中显示信息 
+			<result name="login">/WEB-INF/pages/login.jsp</result>
+			-->
+			<!-- 3 成功页面 -->
+			<result name="home">/WEB-INF/pages/frame.jsp</result>
+			<!-- 4 input 用于处理系统默认错误 -->
+			<result name="input">/WEB-INF/pages/login.jsp</result>
+			<!-- 5 查询所有 -->
+			<result name="findAll">/WEB-INF/pages/staff/listStaff.jsp</result>
+		</action>
+	</package>
+</struts>

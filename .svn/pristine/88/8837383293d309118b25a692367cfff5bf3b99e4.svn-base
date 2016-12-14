@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  
+  <!-- spring  
+  	* 设置初始化参数，确定spring配置文件位置
+  	* 使用监听器去加载配置文件，并将spring容器存放到ServletContext作用域
+  -->
+  <context-param>
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>classpath:spring/applicationContext*.xml</param-value>
+  </context-param>
+  <listener>
+  	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <!-- spring  提供过滤器 -->
+  <filter>
+  	<filter-name>openSession</filter-name>
+  	<filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>openSession</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  
+  <!-- struts  
+  	* 配置前端控制器，服务器在启动时，初始化init(FilerConfig)将自动调用
+  	* struts在初始化方法中，将自动的加载 classpath:struts.xml 文件  (src/config 两个源码目录都表示 类路径 classpath)
+  -->
+  <filter>
+  	<filter-name>struts2</filter-name>
+  	<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>struts2</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  
+</web-app>

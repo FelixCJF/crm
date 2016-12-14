@@ -1,0 +1,19 @@
+package com.itheima.crm.coursetype.service;
+
+import java.util.List;
+
+import com.itheima.crm.coursetype.domain.CrmCourseType;
+
+public interface CourseTypeService {
+	
+	public void addCourseType(CrmCourseType courseType);
+	
+	public void updateCourseType(CrmCourseType courseType);
+	
+	public void deleteCourseType(CrmCourseType courseType);
+	
+	public List<CrmCourseType> findAll();
+	
+	public CrmCourseType findById(String id);
+
+}

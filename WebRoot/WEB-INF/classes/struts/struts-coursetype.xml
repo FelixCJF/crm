@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 课程类别-->
+	<package name="crm_cou" namespace="/courseType" extends="common">
+		<action name="courseTypeAction_*" class="com.itheima.crm.coursetype.web.action.CourseTypeAction" method="{1}">
+			<!-- 查询所有 -->
+			<result name="findAll">/WEB-INF/pages/coursetype/listCourse.jsp</result>
+			<!-- 添加或更新页面显示 -->
+			<result name="addOrUpdateUI">/WEB-INF/pages/coursetype/addOrEditCourse.jsp</result>
+			<!-- 添加或更新成功 ,重定向查询
+				* 给结果类实现类设置属性值
+			-->
+			<result name="addOrUpdate" type="redirectAction">
+				<param name="namespace">/courseType</param>
+				<param name="actionName">courseTypeAction_findAll</param>
+			</result>
+		</action>
+	</package>
+</struts>

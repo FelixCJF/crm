@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans.xsd
+       					   http://www.springframework.org/schema/tx 
+       					   http://www.springframework.org/schema/tx/spring-tx.xsd
+       					   http://www.springframework.org/schema/aop 
+       					   http://www.springframework.org/schema/aop/spring-aop.xsd
+       					   http://www.springframework.org/schema/context 
+       					   http://www.springframework.org/schema/context/spring-context.xsd">
+	<!-- 公共配置文件，web.xml配置加载核心文件 -->
+	<!-- 1 加载properties文件 -->
+	<context:property-placeholder location="classpath:jdbcinfo.properties"/>
+	<!-- 2 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+	<!-- 3 配置hibernate SessionFactory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<!-- 3.1 配置数据源 
+			* <property name="属性名" ref="另一个bean引用">
+				name 必须是对象的setter方法推断获得，setDataSource(...)， 去掉set DataSource ，首字母小写  dataSource
+			* ref 其他bean引用 <bean id=""> 可以任意，一般情况与上面属性名称相同。
+		-->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 3.2 配置hibernate其他属性 
+			* 在hibernate.cfg.xml 配置文件 “hibernate.dialect” 和 “dialect” 等效的
+			* 在spring配置文件中，必须使用“hibernate.dialect”
+		-->
+		<property name="hibernateProperties">
+			<props>
+				<!-- 方言 -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<!-- 显示sql语句 -->
+				<prop key="hibernate.show_sql">true</prop>
+				<!-- 格式化sql语句 -->
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+		<!-- 3.3 加载映射文件 
+			com/itheima/crm/staff/domain/CrmStaff.hbm.xml
+			com/itheima/crm/post/domain/CrmPost.hbm.xml
+			com/itheima/crm/*/domain/*.hbm.xml
+		-->
+		<property name="mappingLocations" value="classpath:com/itheima/crm/*/domain/*.hbm.xml"></property>
+	</bean>
+	
+	<!-- 4 事务管理 -->
+	<!-- 4.1 事务管理器，spring事务必须在事务管理器平台上工作 
+		* 在hibernate中事务需要session，session是从sessionFactory中获取的。
+	-->
+	<bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 4.2 事务通知，确定事务的详情，明确切入点使用什么样的事务  
+		* 项目约定：service层方法名称
+			所有添加必须add开头
+			所有更新必须update开头
+			所有删除必须delete开头
+			所有查询必须find开头
+	-->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="add*"/>
+			<tx:method name="update*"/>
+			<tx:method name="delete*"/>
+			<tx:method name="find*" read-only="true"/>
+			<tx:method name="*" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- 4.3 aop编程，确定切入点  
+		* 所有的service层，需要进行事务管理
+			com.itheima.crm.staff.service.impl
+			com.itheima.crm.classes.service.impl
+			com.itheima.crm.*.service..
+	-->
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.itheima.crm.*.service..*.*(..))"/>
+	</aop:config>
+	
+	
+	<!-- 将其他模块进行包含 
+	<import resource="applicationContext-staff.xml"/>
+	<import resource="applicationContext-department.xml"/>
+	<import resource="applicationContext-post.xml"/>
+	-->
+</beans>

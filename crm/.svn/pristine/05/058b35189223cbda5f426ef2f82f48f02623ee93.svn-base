@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- struts 核心配置，公共内容 -->
+	<!-- 1 常量 -->
+	<!-- 1.1 开发模式 -->
+	<constant name="struts.devMode" value="true"></constant>
+	<!-- 1.2 struts 标签主题, simple 表示 没有风格，使用struts标签为了回显 -->
+	<constant name="struts.ui.theme" value="simple"></constant>
+	
+	<!-- 2 公共模块，共有的内容都配置此包中 -->
+	<package name="common" namespace="/" extends="struts-default">
+		<!-- 2.2 拦截器 -->
+		<interceptors>
+			<!-- 2.2.1 注册拦截器(名称和实现类) -->
+			<interceptor name="loginInterceptor" class="com.itheima.crm.web.interceptor.LoginInterceptor"></interceptor>
+			<!-- 2.2.2 自定义拦截器栈 -->
+			<interceptor-stack name="crmStack">
+				<!-- 1) 默认拦截器栈 -->
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<!-- 2) 其他拦截器（token令牌：重置表单重复提交） -->
+				<!-- 3) 自定义拦截器 
+					* 设置<param name="属性"> 将执行拦截器实现类的setter方法
+						<param name="methodName">login</param>
+					* excludeMethods 给父类设置需要排除的方法们，多个方法使用逗号分隔
+				-->
+				<interceptor-ref name="loginInterceptor">
+					<param name="excludeMethods">login</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		
+		<!-- 2.2.3 将自定义栈 配置 默认栈 
+		<default-interceptor-ref name="crmStack"></default-interceptor-ref>
+		-->
+		
+		<!-- 2.2.4 全局结果 -->
+		<global-results>
+			<result name="login">/WEB-INF/pages/login.jsp</result>
+		</global-results>
+	
+		<!-- 2.1 UIAction统一显示 WEB-INF下的jsp页面
+			# uiAction_*_* ， 第一个星表示文件夹名称，第二个星表示jsp文件文件
+			# class 默认值 ActionSupport
+				1) struts-default.xml
+					<default-class-ref class="com.opensymphony.xwork2.ActionSupport" />
+				2) actionSupport 默认方法和返回值
+					public String execute() throws Exception {
+				        return SUCCESS;
+				    }
+			# result.name 默认值 success
+		
+		 -->
+		<action name="uiAction_*_*">
+			<result>/WEB-INF/pages/{1}/{2}.jsp</result>
+		</action>
+	</package>
+	
+	<!-- 包含其他模块 -->
+	<include file="struts/struts-staff.xml"></include>
+	<include file="struts/struts-post.xml"></include>
+	<include file="struts/struts-coursetype.xml"></include>
+</struts>
